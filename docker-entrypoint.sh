@@ -113,7 +113,7 @@ mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER
 for monitor in `ls /etc/zm/monitor*.conf`; do
     . ${monitor};
     mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER_DB_NAME} -e \
-          "INSERT INTO Monitor (Name, Type, Function, Enabled, Protocol, Method, Host, Port, Path, Subpath, Width, Height, Colours, MaxFPS, AlarmMaxFPS) VALUES ('${NAME}', '${TYPE}', '${FUNCTION}', '${ENABLED}', '${PROTOCOL}', '${METHOD}', '${IP}', '${PORT}', '${PATH}', '${SUBPATH}', '${WIDTH}', '${HEIGHT}', '${COLOURS}', '${MAXFPS}', '${ALARMMAXFPS}');";
+          "INSERT INTO Monitors (Name, Type, Function, Enabled, Protocol, Method, Host, Port, Path, Subpath, Width, Height, Colours, MaxFPS, AlarmMaxFPS) VALUES ('${NAME}', '${TYPE}', '${FUNCTION}', '${ENABLED}', '${PROTOCOL}', '${METHOD}', '${IP}', '${PORT}', '${PATH}', '${SUBPATH}', '${WIDTH}', '${HEIGHT}', '${COLOURS}', '${MAXFPS}', '${ALARMMAXFPS}');";
 done;
 
 exec "$@"
