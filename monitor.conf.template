@@ -8,9 +8,6 @@ IP=192.168.1.10
 PORT=554
 PATH=user=admin&password=&channel=1&stream=0.sdp
 SUBPATH=
-OPTIONS=
-USER=
-PASS=
 WIDTH=1280
 HEIGHT=720
 COLOURS=3

@@ -85,7 +85,7 @@ mysql -u root -p${MYSQL_ROOT_PWD} -h ${DB_HOST} -e "DROP USER ${ZONEMINDER_DB_US
 mysql -u root -p${MYSQL_ROOT_PWD} -h ${DB_HOST} -e "CREATE USER ${ZONEMINDER_DB_USER} IDENTIFIED BY '${ZONEMINDER_DB_PWD}';"
 check_result $? "Creating User"
 
-echo 'GRANT LOCK TABLES,ALTER,CREATE,SELECT,INSERT,UPDATE,DELETE,INDEX ON zm.* to 'zmuser'@localhost identified by "${ZONEMINDER_DB_PWD}";'    | sudo mysql -u root -p${MYSQL_ROOT_PWD} -h ${DB_HOST} mysql
+echo "GRANT LOCK TABLES,ALTER,CREATE,SELECT,INSERT,UPDATE,DELETE,INDEX ON zm.* to ${ZONEMINDER_DB_USER} identified by '${ZONEMINDER_DB_PWD}';"    | sudo mysql -u root -p${MYSQL_ROOT_PWD} -h ${DB_HOST} mysql
 check_result $? "Granting permissions"
 
 mysql -u root -p${MYSQL_ROOT_PWD} -h ${DB_HOST} -e "FLUSH PRIVILEGES;"
@@ -110,10 +110,10 @@ mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER
 mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER_DB_NAME} -e \
       'UPDATE Users SET Password="${ZONEMINDER_ADMIN_PWD}" WHERE Username = "admin";'
 #Monitors
-for monitor in `ls /etc/zm/*.conf`; do
-    . ${monitor}
+for monitor in `ls /etc/zm/monitor*.conf`; do
+    . ${monitor};
     mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER_DB_NAME} -e \
-          'INSERT INTO Monitor (Name, Type, Function, Enabled, Protocol, Method, Ip, Port, Path, Subpath, Options, User, Pass, Width, Height, Colours, MaxFPS, AlarmMaxFPS) VALUES ("${NAME}", "${TYPE}", "${FUNCTION}", "${ENABLED}", "${PROTOCOL}", "${METHOD}", "${IP}", "${PORT}", "${PATH}", "${SUBPATH}", "${OPTIONS}", "${USER}", "${PASS}", "${WIDTH}", "${HEIGHT}", "${COLOURS}", "${MAXFPS}", "${ALARMMAXFPS);'
+          "INSERT INTO Monitor (Name, Type, Function, Enabled, Protocol, Method, Host, Port, Path, Subpath, Width, Height, Colours, MaxFPS, AlarmMaxFPS) VALUES ('${NAME}', '${TYPE}', '${FUNCTION}', '${ENABLED}', '${PROTOCOL}', '${METHOD}', '${IP}', '${PORT}', '${PATH}', '${SUBPATH}', '${WIDTH}', '${HEIGHT}', '${COLOURS}', '${MAXFPS}', '${ALARMMAXFPS}');";
 done;
 
 exec "$@"
