@@ -46,12 +46,12 @@ fi
 
 # Config file
 CONFIG_FILE=/etc/zm/zm.conf
-#sed -i 's/ZM_PATH_DATA=.*/ZM_PATH_DATA=${ZONEMINDER_DATA_PATH}/' ${CONFIG_FILE}
-sed -i 's/ZM_DB_HOST=.*/ZM_DB_HOST=${DB_HOST}/' ${CONFIG_FILE}
-sed -i 's/ZM_DB_USER=.*/ZM_DB_USER=${ZONEMINDER_DB_USER}/' ${CONFIG_FILE}
-sed -i 's/ZM_DB_PASS=.*/ZM_DB_USER=${ZONEMINDER_DB_PWD}/' ${CONFIG_FILE}
+#sed -i "s/ZM_PATH_DATA=.*/ZM_PATH_DATA=${ZONEMINDER_DATA_PATH}/" ${CONFIG_FILE}
+sed -i "s/ZM_DB_HOST=.*/ZM_DB_HOST=${DB_HOST}/" ${CONFIG_FILE}
+sed -i "s/ZM_DB_USER=.*/ZM_DB_USER=${ZONEMINDER_DB_USER}/" ${CONFIG_FILE}
+sed -i "s/ZM_DB_PASS=.*/ZM_DB_PASS=${ZONEMINDER_DB_PWD}/" ${CONFIG_FILE}
 # It's hardcoded in /usr/share/zoneminder/db/zm_create.sql:
-#sed -i 's/ZM_DB_NAME=.*/ZM_DB_USER=${ZONEMINDER_DB_NAME}/' ${CONFIG_FILE}
+#sed -i "s/ZM_DB_NAME=.*/ZM_DB_USER=${ZONEMINDER_DB_NAME}/" ${CONFIG_FILE}
 
 function check_result {
     if [ $1 != 0 ]; then
@@ -108,12 +108,12 @@ mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER
 
 #Admin pwd
 mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER_DB_NAME} -e \
-      'UPDATE Users SET Password="${ZONEMINDER_ADMIN_PWD}" WHERE Username = "admin";'
+      "UPDATE Users SET Password=password('${ZONEMINDER_ADMIN_PWD}') WHERE Username = 'admin';"
 #Monitors
 for monitor in `ls /etc/zm/monitor*.conf`; do
     . ${monitor};
     mysql -u ${ZONEMINDER_DB_USER} -p${ZONEMINDER_DB_PWD} -h ${DB_HOST} ${ZONEMINDER_DB_NAME} -e \
-          "INSERT INTO Monitors (Name, Type, Function, Enabled, Protocol, Method, Host, Port, Path, Subpath, Width, Height, Colours, MaxFPS, AlarmMaxFPS) VALUES ('${NAME}', '${TYPE}', '${FUNCTION}', '${ENABLED}', '${PROTOCOL}', '${METHOD}', '${IP}', '${PORT}', '${PATH}', '${SUBPATH}', '${WIDTH}', '${HEIGHT}', '${COLOURS}', '${MAXFPS}', '${ALARMMAXFPS}');";
+          "INSERT INTO Monitors (Name, Type, Function, Enabled, Protocol, Method, Host, Port, Path, Subpath, Width, Height, Colours, MaxFPS, AlarmMaxFPS) VALUES ('${NAME}', '${TYPE}', '${FUNCTION}', '${ENABLED}', '${PROTOCOL}', '${METHOD}', '${IP}', '${PORT}', '${M_PATH}', '${SUBPATH}', '${WIDTH}', '${HEIGHT}', '${COLOURS}', '${MAXFPS}', '${ALARMMAXFPS}');";
 done;
 
 exec "$@"

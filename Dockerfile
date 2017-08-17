@@ -31,4 +31,4 @@ RUN chgrp -c www-data /etc/zm/zm.conf && \
 #VOLUME ${ZONEMINDER_DATA_PATH}
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD systemctl reload apache2 && systemctl start zoneminder && tail -f /dev/null
+CMD service apache2 start && service zoneminder start && tail -f /dev/null
