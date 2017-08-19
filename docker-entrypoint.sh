@@ -9,13 +9,12 @@ ZONEMINDER_DB_NAME=zm
 #TODO!!
 ZONEMINDER_DATA_PATH=TODO
 
-if [ -z "$ZONEMINDER_SERVER_NAME" ]; then
-    echo >&2 'error: you have to provide a server-name'
-    echo >&2 '  Did you forget to add -e HOSTNAME=... ?'
-    exit 1
-fi
+#if [ -z "${ZONEMINDER_SERVER_NAME}" ]; then
+#    echo >&2 'error: you have to provide a server-name (ZONEMINDER_SERVER_NAME)'
+#    exit 1
+#fi
 
-sudo sed -i "s/server_name localhost/server_name $ZONEMINDER_SERVER_NAME/g" /etc/nginx/sites-available/default
+#sudo sed -i "s/server_name localhost/server_name $ZONEMINDER_SERVER_NAME/g" /etc/nginx/sites-available/default
 
 # set Admin password from secret
 if [ ! -z $ZONEMINDER_ADMIN_PWD_FILE -a -f $ZONEMINDER_ADMIN_PWD_FILE ]; then
@@ -37,19 +36,22 @@ ZONEMINDER_DB_USER, ZONEMINDER_DB_PWD, ZONEMINDER_ADMIN_PWD, ZONEMINDER_DATA_PAT
 fi
 
 # SSL certificates
-if [ ! -f /etc/nginx/ssl/zoneminder.crt ]; then
-    sudo mkdir /etc/nginx/ssl
-    sudo openssl genrsa -out /etc/nginx/ssl/zoneminder.key 4096
-    sudo openssl req -new -sha256 -batch -subj "/CN=$ZONEMINDER_SERVER_NAME" -key /etc/nginx/ssl/zoneminder.key -out /etc/nginx/ssl/zoneminder.csr
-    sudo openssl x509 -req -sha256 -days 3650 -in /etc/nginx/ssl/zoneminder.csr -signkey /etc/nginx/ssl/zoneminder.key -out /etc/nginx/ssl/zoneminder.crt
-fi
+#if [ ! -f /etc/nginx/ssl/zoneminder.crt ]; then
+#    sudo mkdir /etc/nginx/ssl
+#    sudo openssl genrsa -out /etc/nginx/ssl/zoneminder.key 4096
+#    sudo openssl req -new -sha256 -batch -subj "/CN=$ZONEMINDER_SERVER_NAME" -key /etc/nginx/ssl/zoneminder.key -out /etc/nginx/ssl/zoneminder.csr
+#    sudo openssl x509 -req -sha256 -days 3650 -in /etc/nginx/ssl/zoneminder.csr -signkey /etc/nginx/ssl/zoneminder.key -out /etc/nginx/ssl/zoneminder.crt
+#fi
+
+# PHP timezone
+sed  -i "s/\;date.timezone =/date.timezone = '${TIMEZONE/\//\\/}'/" /etc/php5/apache2/php.ini
 
 # Config file
 CONFIG_FILE=/etc/zm/zm.conf
 #sed -i "s/ZM_PATH_DATA=.*/ZM_PATH_DATA=${ZONEMINDER_DATA_PATH}/" ${CONFIG_FILE}
 sed -i "s/ZM_DB_HOST=.*/ZM_DB_HOST=${DB_HOST}/" ${CONFIG_FILE}
 sed -i "s/ZM_DB_USER=.*/ZM_DB_USER=${ZONEMINDER_DB_USER}/" ${CONFIG_FILE}
-sed -i "s/ZM_DB_PASS=.*/ZM_DB_PASS=${ZONEMINDER_DB_PWD}/" ${CONFIG_FILE}
+sed -i "s/ZM_DB_PASS=.*/ZM_DB_PASS=${ZONEMINDER_DB_PWD/\//\\/}/" ${CONFIG_FILE}
 # It's hardcoded in /usr/share/zoneminder/db/zm_create.sql:
 #sed -i "s/ZM_DB_NAME=.*/ZM_DB_USER=${ZONEMINDER_DB_NAME}/" ${CONFIG_FILE}
 
