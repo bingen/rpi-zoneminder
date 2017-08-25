@@ -6,6 +6,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 #TODO
 #ARG ZONEMINDER_DATA_PATH
 
+# increase shm
+RUN echo tmpfs      /dev/shm      tmpfs   defaults,size=256m   0   0 >> /etc/fstab && \
+    mount -o remount /dev/shm
+
 RUN echo deb http://deb.debian.org/debian jessie-backports main  >> /etc/apt/sources.list
 COPY apt-preferences-zm /etc/apt/preferences.d/zoneminder
 RUN apt-get update && \
